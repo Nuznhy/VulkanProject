@@ -1,0 +1,14 @@
+{
+  "name": "learn-vulkan",
+  "version": "0.1.0",
+  "dependencies": [
+    "glfw3",
+    "glm",
+    "freetype",
+    "stb",
+    {
+      "name": "imgui",
+      "features": ["freetype", "glfw-binding", "vulkan-binding"]
+    }
+  ]
+}
