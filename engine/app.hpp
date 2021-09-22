@@ -4,6 +4,7 @@
 #include "lvk_pipeline.hpp"
 #include "lvk_device.hpp"
 #include "lvk_swap_chain.hpp"
+#include "lvk_model.hpp"
 //std
 #include <memory>
 #include <vector>
@@ -20,6 +21,7 @@ namespace lvk {
         App &operator=(const App &) = delete;
         void run();
     private:
+        void loadModels();
         void createPipelineLayout();
         void createPipeline();
         void createCommandBuffers();
@@ -32,5 +34,6 @@ namespace lvk {
         std::unique_ptr<LvkPipeline> lvkPipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;
+        std::unique_ptr<LvkModel> lvkModel;
     };
 }

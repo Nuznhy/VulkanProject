@@ -2,8 +2,11 @@
 
 #include <stdexcept>
 #include <array>
+#include <cstdlib>
+#include <ctime>
 namespace lvk {
     App::App(){
+        loadModels();
         createPipelineLayout();
         createPipeline();
         createCommandBuffers();
@@ -19,6 +22,17 @@ namespace lvk {
             drawFrame();
         }
         vkDeviceWaitIdle(lvkDevice.device());
+    }
+
+    void App::loadModels() {
+        // srand (static_cast <unsigned> (time(0)));
+        std::vector<LvkModel::Vertex> vertices {
+                {{0.0f, -0.5f}},
+                {{0.5f, 0.5f}},
+                {{-0.5f, 0.5f}}
+        };
+
+        lvkModel = std::make_unique<LvkModel>(lvkDevice, vertices);
     }
 
     void App::createPipelineLayout() {
@@ -79,7 +93,8 @@ namespace lvk {
             vkCmdBeginRenderPass(commandBuffers[i], &renderPathInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             lvkPipeline->bind(commandBuffers[i]);
-            vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+            lvkModel->bind(commandBuffers[i]);
+            lvkModel->draw(commandBuffers[i]);
 
             vkCmdEndRenderPass(commandBuffers[i]);
             if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS){
