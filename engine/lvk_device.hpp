@@ -34,7 +34,7 @@ class LvkDevice {
 
   // Not copyable or movable
   LvkDevice(const LvkDevice &) = delete;
-  void operator=(const LvkDevice &) = delete;
+  LvkDevice& operator=(const LvkDevice &) = delete;
   LvkDevice(LvkDevice &&) = delete;
   LvkDevice &operator=(LvkDevice &&) = delete;
 

@@ -26,11 +26,12 @@ namespace lvk {
         void createPipeline();
         void createCommandBuffers();
         void drawFrame();
-
+        void recreateSwapChain();
+        void recordCommandBuffer(int imageIndex);
 
         LvkWindow lvkWindow{WIDTH, HEIGHT, "First app"};
         LvkDevice lvkDevice{lvkWindow};
-        LvkSwapChain lvkSwapChain{lvkDevice, lvkWindow.getExtent()};
+        std::unique_ptr<LvkSwapChain> lvkSwapChain;
         std::unique_ptr<LvkPipeline> lvkPipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;
