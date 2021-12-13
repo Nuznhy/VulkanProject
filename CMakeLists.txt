@@ -56,7 +56,8 @@ set(HEADER_FILES
         engine/lvk_pipeline.hpp
         engine/lvk_device.hpp
         engine/lvk_swap_chain.hpp
-        engine/lvk_model.hpp)
+        engine/lvk_model.hpp
+        engine/lvk_game_object.hpp)
 set(CPP_FILES
         engine/lvk_window.cpp
         engine/app.cpp

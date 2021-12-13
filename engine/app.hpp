@@ -5,6 +5,7 @@
 #include "lvk_device.hpp"
 #include "lvk_swap_chain.hpp"
 #include "lvk_model.hpp"
+#include "lvk_game_object.hpp"
 //std
 #include <memory>
 #include <vector>
@@ -21,13 +22,14 @@ namespace lvk {
         App &operator=(const App &) = delete;
         void run();
     private:
-        void loadModels();
+        void loadGameObjects();
         void createPipelineLayout();
         void createPipeline();
         void createCommandBuffers();
         void drawFrame();
         void recreateSwapChain();
         void recordCommandBuffer(int imageIndex);
+        void renderGameObjects(VkCommandBuffer commandBuffer);
 
         LvkWindow lvkWindow{WIDTH, HEIGHT, "First app"};
         LvkDevice lvkDevice{lvkWindow};
@@ -35,6 +37,6 @@ namespace lvk {
         std::unique_ptr<LvkPipeline> lvkPipeline;
         VkPipelineLayout pipelineLayout;
         std::vector<VkCommandBuffer> commandBuffers;
-        std::unique_ptr<LvkModel> lvkModel;
+        std::vector<LvkGameObject> gameObjects;
     };
 }
