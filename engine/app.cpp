@@ -102,7 +102,7 @@ namespace lvk {
         std::shared_ptr<LvkModel> lvkModel = createCubeModel(lvkDevice, {.0f, .0f, .0f});
         auto cube = LvkGameObject::createGameObject();
         cube.model = lvkModel;
-        cube.transform.translation = {.0f, .0f, 2.5f};
+        cube.transform.translation = {.0f, .0f, 1.5f};
         cube.transform.scale = {.5f, .5f, .5f};
         gameObjects.push_back(std::move(cube));
     }
