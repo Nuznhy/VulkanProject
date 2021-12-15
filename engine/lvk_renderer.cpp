@@ -92,11 +92,11 @@ namespace lvk {
             recreateSwapChain();
         }
 
-        if (result != VK_SUCCESS){
-            throw std::runtime_error("failed to acquire swap chain image");
-        }
+        //if (result != VK_SUCCESS){
+        //    throw std::runtime_error("failed to acquire swap chain image");
+        //}
         isFrameStarted = false;
-        currentImageIndex = (currentImageIndex + 1) % LvkSwapChain::MAX_FRAMES_IN_FLIGHT;
+        currentFrameIndex = (currentFrameIndex + 1) % LvkSwapChain::MAX_FRAMES_IN_FLIGHT;
     }
 
     void LvkRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
