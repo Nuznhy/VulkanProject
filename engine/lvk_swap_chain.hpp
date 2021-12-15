@@ -8,6 +8,7 @@
 // std lib headers
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace lvk {
 
@@ -15,8 +16,11 @@ class LvkSwapChain {
  public:
   static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
 
-  LvkSwapChain(LvkDevice &deviceRef, VkExtent2D windowExtent);
-  ~LvkSwapChain();
+    LvkSwapChain(LvkDevice &deviceRef, VkExtent2D windowExtent);
+    LvkSwapChain(
+            LvkDevice &deviceRef, VkExtent2D windowExtent, std::shared_ptr<LvkSwapChain> previous);
+
+    ~LvkSwapChain();
 
   LvkSwapChain(const LvkSwapChain &) = delete;
   LvkSwapChain &operator=(const LvkSwapChain &) = delete;
@@ -38,7 +42,12 @@ class LvkSwapChain {
   VkResult acquireNextImage(uint32_t *imageIndex);
   VkResult submitCommandBuffers(const VkCommandBuffer *buffers, uint32_t *imageIndex);
 
+  bool compareSwapFormats(const LvkSwapChain& swapChain) const {
+      return swapChain.swapChainDepthFormat == swapChainDepthFormat && swapChain.swapChainImageFormat == swapChainImageFormat;
+  }
+
  private:
+  void init();
   void createSwapChain();
   void createImageViews();
   void createDepthResources();
@@ -54,6 +63,7 @@ class LvkSwapChain {
   VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
 
   VkFormat swapChainImageFormat;
+  VkFormat swapChainDepthFormat;
   VkExtent2D swapChainExtent;
 
   std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -69,12 +79,14 @@ class LvkSwapChain {
   VkExtent2D windowExtent;
 
   VkSwapchainKHR swapChain;
+  std::shared_ptr<LvkSwapChain> oldSwapChain;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;
   std::vector<VkFence> imagesInFlight;
   size_t currentFrame = 0;
+
 };
 
 }  // namespace lve

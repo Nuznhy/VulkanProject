@@ -57,14 +57,18 @@ set(HEADER_FILES
         engine/lvk_device.hpp
         engine/lvk_swap_chain.hpp
         engine/lvk_model.hpp
-        engine/lvk_game_object.hpp)
+        engine/lvk_game_object.hpp
+        engine/lvk_renderer.hpp
+        engine/simple_render_system.hpp)
 set(CPP_FILES
         engine/lvk_window.cpp
         engine/app.cpp
         engine/lvk_pipeline.cpp
         engine/lvk_device.cpp
         engine/lvk_swap_chain.cpp
-        engine/lvk_model.cpp)
+        engine/lvk_model.cpp
+        engine/lvk_renderer.cpp
+        engine/simple_render_system.cpp)
 
 add_executable(newexec main.cpp ${CPP_FILES} ${HEADER_FILES})
 add_shader(newexec shader.frag)

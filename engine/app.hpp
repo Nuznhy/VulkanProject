@@ -1,9 +1,8 @@
 #pragma once
 
 #include "lvk_window.hpp"
-#include "lvk_pipeline.hpp"
 #include "lvk_device.hpp"
-#include "lvk_swap_chain.hpp"
+#include "lvk_renderer.hpp"
 #include "lvk_model.hpp"
 #include "lvk_game_object.hpp"
 //std
@@ -23,20 +22,12 @@ namespace lvk {
         void run();
     private:
         void loadGameObjects();
-        void createPipelineLayout();
-        void createPipeline();
-        void createCommandBuffers();
-        void drawFrame();
-        void recreateSwapChain();
-        void recordCommandBuffer(int imageIndex);
-        void renderGameObjects(VkCommandBuffer commandBuffer);
+
 
         LvkWindow lvkWindow{WIDTH, HEIGHT, "First app"};
         LvkDevice lvkDevice{lvkWindow};
-        std::unique_ptr<LvkSwapChain> lvkSwapChain;
-        std::unique_ptr<LvkPipeline> lvkPipeline;
-        VkPipelineLayout pipelineLayout;
-        std::vector<VkCommandBuffer> commandBuffers;
+        LvkRenderer lvkRenderer{lvkWindow, lvkDevice};
+
         std::vector<LvkGameObject> gameObjects;
     };
 }
