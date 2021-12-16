@@ -1,5 +1,5 @@
 #pragma once
-
+#include "lvk_frame_info.hpp"
 #include "lvk_camera.hpp"
 #include "lvk_pipeline.hpp"
 #include "lvk_device.hpp"
@@ -17,8 +17,7 @@ namespace lvk {
 
         SimpleRenderSystem(const SimpleRenderSystem &) = delete;
         SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
-        void renderGameObjects(VkCommandBuffer commandBuffer, std::vector<LvkGameObject> &gameObjects,
-                               const LvkCamera &camera);
+        void renderGameObjects(FrameInfo &frameInfo, std::vector<LvkGameObject> &gameObjects);
     private:
         void createPipelineLayout();
         void createPipeline(VkRenderPass renderPass);

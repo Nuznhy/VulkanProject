@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lvk_device.hpp"
-
+#include "lvk_buffer.hpp"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
@@ -48,13 +48,11 @@ namespace lvk {
         void createIndexBuffers(const std::vector<uint32_t> &indices);
 
         LvkDevice &lvkDevice;
-        VkBuffer vertexBuffer;
-        VkDeviceMemory vertexBufferMemory;
+        std::unique_ptr<LvkBuffer> vertexBuffer;
         uint32_t vertexCount;
 
         bool hasIndexBuffer = false;
-        VkBuffer indexBuffer;
-        VkDeviceMemory indexBufferMemory;
+        std::unique_ptr<LvkBuffer> indexBuffer;
         uint32_t indexCount;
     };
 }

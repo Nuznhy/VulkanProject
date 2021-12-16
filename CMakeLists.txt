@@ -62,7 +62,8 @@ set(HEADER_FILES
         engine/lvk_renderer.hpp
         engine/simple_render_system.hpp
         engine/lvk_camera.hpp
-        engine/keyboard_movement_controller.hpp)
+        engine/keyboard_movement_controller.hpp
+        engine/lvk_buffer.hpp engine/lvk_frame_info.hpp)
 set(CPP_FILES
         engine/lvk_window.cpp
         engine/app.cpp
@@ -73,7 +74,9 @@ set(CPP_FILES
         engine/lvk_renderer.cpp
         engine/simple_render_system.cpp
         engine/lvk_camera.cpp
-        engine/keyboard_movement_controller.cpp)
+        engine/keyboard_movement_controller.cpp
+        engine/lvk_game_object.cpp
+        engine/lvk_buffer.cpp)
 
 add_executable(newexec main.cpp ${CPP_FILES} ${HEADER_FILES})
 add_shader(newexec shader.frag)

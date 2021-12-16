@@ -2,6 +2,7 @@
 
 #include "keyboard_movement_controller.hpp"
 #include "simple_render_system.hpp"
+#include "lvk_buffer.hpp"
 #include "lvk_camera.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -14,8 +15,14 @@
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
+#include <numeric>
 
 namespace lvk {
+
+    struct GlobalUbo {
+        glm::mat4 projectionView{1.f};
+        glm::vec3 lightDirection = glm::normalize(glm::vec3{1.f, -3.f, -1.f});
+    };
 
     App::App(){
         loadGameObjects();
@@ -24,6 +31,17 @@ namespace lvk {
     App::~App(){ }
 
     void App::run() {
+        std::vector<std::unique_ptr<LvkBuffer>> uboBuffers(LvkSwapChain::MAX_FRAMES_IN_FLIGHT);
+        for (auto & uboBuffer : uboBuffers) {
+            uboBuffer = std::make_unique<LvkBuffer>(lvkDevice,
+                                                   sizeof(GlobalUbo),
+                                                   1,
+                                                   VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                                                   VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
+                                                   );
+            uboBuffer->map();
+        }
+
         SimpleRenderSystem simpleRenderSystem{lvkDevice, lvkRenderer.getSwapChainRenderPass()};
 
         LvkCamera camera{};
@@ -45,10 +63,25 @@ namespace lvk {
             camera.setViewYXZ(viewerObject.transform.translation, viewerObject.transform.rotation);
             float aspect = lvkRenderer.getAspectRation();
             //camera.setOrthographicProjection(-aspect, aspect, -1, 1, -1, 1);
-            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 10.f);
+            camera.setPerspectiveProjection(glm::radians(50.f), aspect, 0.1f, 100.f);
             if (auto commandBuffer = lvkRenderer.beginFrame()){
+                int frameIndex = lvkRenderer.getFrameIndex();
+                FrameInfo frameInfo{
+                    frameIndex,
+                    frameTime,
+                    commandBuffer,
+                    camera
+                };
+
+                // update
+                GlobalUbo ubo{};
+                ubo.projectionView = camera.getProjection() * camera.getView();
+                uboBuffers[frameIndex]->writeToBuffer(&ubo);
+                uboBuffers[frameIndex]->flush();
+
+                // render
                 lvkRenderer.beginSwapChainRenderPass(commandBuffer);
-                simpleRenderSystem.renderGameObjects(commandBuffer, gameObjects, camera);
+                simpleRenderSystem.renderGameObjects(frameInfo, gameObjects);
                 lvkRenderer.endSwapChainRenderPass(commandBuffer);
                 lvkRenderer.endFrame();
             }
@@ -58,11 +91,18 @@ namespace lvk {
 
 
     void App::loadGameObjects() {
-        std::shared_ptr<LvkModel> lvkModel = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/smooth_vase.obj");
-        auto gameObj = LvkGameObject::createGameObject();
-        gameObj.model = lvkModel;
-        gameObj.transform.translation = {.0f, .0f, 2.5f};
-        gameObj.transform.scale = glm::vec3(3.f);
-        gameObjects.push_back(std::move(gameObj));
+        std::shared_ptr<LvkModel> xwingModel = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/X-home-wing.obj");
+        auto xwing = LvkGameObject::createGameObject();
+        xwing.model = xwingModel;
+        xwing.transform.translation = {50.0f, -55.f, -5.0f};
+        xwing.transform.scale = glm::vec3(1.f);
+        gameObjects.push_back(std::move(xwing));
+
+        std::shared_ptr<LvkModel> ar15Model = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/ar-15.obj");
+        auto ar15 = LvkGameObject::createGameObject();
+        ar15.model = ar15Model;
+        ar15.transform.translation = {.0f, .5f, 0.5f};
+        ar15.transform.scale = glm::vec3(0.1f);
+        gameObjects.push_back(std::move(ar15));
     }
 }
