@@ -19,7 +19,12 @@ namespace lvk {
             static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
         };
 
-        LvkModel(LvkDevice &device, const std::vector<Vertex> &vertices);
+        struct Builder {
+            std::vector<Vertex> vertices{};
+            std::vector<uint32_t> indices{};
+        };
+
+        LvkModel(LvkDevice &device, const LvkModel::Builder &builder);
         ~LvkModel();
 
         LvkModel(const LvkModel &) = delete;
@@ -30,10 +35,16 @@ namespace lvk {
 
     private:
         void createVertexBuffers(const std::vector<Vertex> &vertices);
+        void createIndexBuffers(const std::vector<uint32_t> &indices);
 
         LvkDevice &lvkDevice;
         VkBuffer vertexBuffer;
         VkDeviceMemory vertexBufferMemory;
         uint32_t vertexCount;
+
+        bool hasIndexBuffer = false;
+        VkBuffer indexBuffer;
+        VkDeviceMemory indexBufferMemory;
+        uint32_t indexCount;
     };
 }
