@@ -5,6 +5,7 @@
     "glfw3",
     "glm",
     "freetype",
+    "tinyobjloader",
     "stb",
     {
       "name": "imgui",

@@ -10,6 +10,7 @@ project(${NAME})
 
 include_directories("engine")
 include_directories("src/shaders")
+include_directories("src/models")
 include_directories("shaders")
 
 set(RESOURCE_INSTALL_DIR "" CACHE PATH "Path to install resources to (leave empty for running uninstalled)")
