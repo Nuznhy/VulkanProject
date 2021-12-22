@@ -10,5 +10,6 @@ namespace lvk {
         float frameTime;
         VkCommandBuffer commandBuffer;
         LvkCamera &camera;
+        VkDescriptorSet globalDescriptorSet;
     };
 }

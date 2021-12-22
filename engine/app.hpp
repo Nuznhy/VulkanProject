@@ -5,6 +5,7 @@
 #include "lvk_renderer.hpp"
 #include "lvk_model.hpp"
 #include "lvk_game_object.hpp"
+#include "lvk_descriptors.hpp"
 //std
 #include <memory>
 #include <vector>
@@ -28,6 +29,7 @@ namespace lvk {
         LvkDevice lvkDevice{lvkWindow};
         LvkRenderer lvkRenderer{lvkWindow, lvkDevice};
 
+        std::unique_ptr<LvkDescriptorPool> globalPool{};
         std::vector<LvkGameObject> gameObjects;
     };
 }

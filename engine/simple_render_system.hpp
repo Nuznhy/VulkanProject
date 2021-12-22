@@ -12,14 +12,14 @@ namespace lvk {
     class SimpleRenderSystem {
     public:
 
-        SimpleRenderSystem(LvkDevice  &device, VkRenderPass renderPass);
+        SimpleRenderSystem(LvkDevice  &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
         ~SimpleRenderSystem();
 
         SimpleRenderSystem(const SimpleRenderSystem &) = delete;
         SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
         void renderGameObjects(FrameInfo &frameInfo, std::vector<LvkGameObject> &gameObjects);
     private:
-        void createPipelineLayout();
+        void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
         void createPipeline(VkRenderPass renderPass);
 
         LvkDevice &lvkDevice;

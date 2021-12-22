@@ -25,6 +25,10 @@ namespace lvk {
     };
 
     App::App(){
+        globalPool = LvkDescriptorPool::Builder(lvkDevice)
+                .setMaxSets(LvkSwapChain::MAX_FRAMES_IN_FLIGHT)
+                .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, LvkSwapChain::MAX_FRAMES_IN_FLIGHT)
+                .build();
         loadGameObjects();
     }
 
@@ -41,11 +45,22 @@ namespace lvk {
                                                    );
             uboBuffer->map();
         }
+        auto globalSetLayout  = LvkDescriptorSetLayout::Builder(lvkDevice)
+                .addBinding(0,VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,VK_SHADER_STAGE_VERTEX_BIT)
+                .build();
+        std::vector<VkDescriptorSet> globalDescriptorSets(LvkSwapChain::MAX_FRAMES_IN_FLIGHT);
+        for (int i = 0; i < globalDescriptorSets.size(); i++) {
+            auto bufferInfo = uboBuffers[i]->descriptorInfo();
+            LvkDescriptorWriter(*globalSetLayout, *globalPool)
+                .writeBuffer(0, &bufferInfo)
+                .build(globalDescriptorSets[i]);
+        }
 
-        SimpleRenderSystem simpleRenderSystem{lvkDevice, lvkRenderer.getSwapChainRenderPass()};
+        SimpleRenderSystem simpleRenderSystem{lvkDevice,
+                                              lvkRenderer.getSwapChainRenderPass(),
+                                              globalSetLayout->getDescriptorSetLayout()};
 
         LvkCamera camera{};
-
 
         auto viewerObject = LvkGameObject::createGameObject();
         KeyboardMovementController cameraController{};
@@ -70,7 +85,8 @@ namespace lvk {
                     frameIndex,
                     frameTime,
                     commandBuffer,
-                    camera
+                    camera,
+                    globalDescriptorSets[frameIndex]
                 };
 
                 // update
@@ -104,5 +120,12 @@ namespace lvk {
         ar15.transform.translation = {.0f, .5f, 0.5f};
         ar15.transform.scale = glm::vec3(0.1f);
         gameObjects.push_back(std::move(ar15));
+
+        std::shared_ptr<LvkModel> e100Model = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/e100_v2.obj");
+        auto e100 = LvkGameObject::createGameObject();
+        e100.model = e100Model;
+        e100.transform.translation = {.0f, .5f, 0.5f};
+        e100.transform.scale = glm::vec3(1.f);
+        gameObjects.push_back(std::move(e100));
     }
 }
