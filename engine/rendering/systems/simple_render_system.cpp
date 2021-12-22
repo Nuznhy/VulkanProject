@@ -57,12 +57,12 @@ namespace lvk {
         pipelineConfig.pipelineLayout = pipelineLayout;
         lvkPipeline = std::make_unique<LvkPipeline>(
                 lvkDevice,
-                "../shaders/shader.vert.spv",
-                "../shaders/shader.frag.spv",
+                "shaders/shader.vert.spv",
+                "shaders/shader.frag.spv",
                 pipelineConfig);
     }
 
-    void SimpleRenderSystem::renderGameObjects(FrameInfo &frameInfo, std::vector<LvkGameObject> &gameObjects) {
+    void SimpleRenderSystem::renderGameObjects(FrameInfo &frameInfo) {
         lvkPipeline->bind(frameInfo.commandBuffer);
 
         vkCmdBindDescriptorSets(
@@ -75,8 +75,13 @@ namespace lvk {
                 0,
                 nullptr);
 
-        for (auto& obj : gameObjects) {
+        for (auto& kv : frameInfo.gameObjects) {
+            auto& obj = kv.second;
+            if (obj.model == nullptr) continue;
             SimplePushConstantData push{};
+            if (obj.getId() == 1) {
+                obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.01f, glm::two_pi<float>());
+            }
             push.modelMatrix = obj.transform.mat4();
             push.normalMatrix = obj.transform.normalMatrix();
             vkCmdPushConstants(frameInfo.commandBuffer,

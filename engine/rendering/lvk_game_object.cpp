@@ -60,5 +60,13 @@ namespace lvk {
                 },
         };
     }
+
+    LvkGameObject LvkGameObject::makePointLight(float intensity, glm::vec3 color) {
+        LvkGameObject gameObj = LvkGameObject::createGameObject();
+        gameObj.color = color;
+        gameObj.pointLight = std::make_unique<PointLightComponent>();
+        gameObj.pointLight->lightIntensity = intensity;
+        return gameObj;
+    }
 }
 

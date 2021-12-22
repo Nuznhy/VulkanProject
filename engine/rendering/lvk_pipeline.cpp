@@ -1,16 +1,24 @@
-#include "lvk_pipeline.hpp"
-#include "lvk_model.hpp"
-//std
-#include <fstream>
-#include <stdexcept>
-#include <iostream>
+#include "rendering/lvk_pipeline.hpp"
+
+#include "rendering/lvk_model.hpp"
+
+// std
 #include <cassert>
+#include <fstream>
+#include <iostream>
+#include <stdexcept>
+
+#ifndef ENGINE_DIR
+#define ENGINE_DIR "../"
+#endif
+
 namespace lvk {
+
     LvkPipeline::LvkPipeline(
-            LvkDevice &device,
-            const std::string &vertFilepath,
-            const std::string &fragFilepath,
-            const PipelineConfigInfo &configInfo)
+            LvkDevice& device,
+            const std::string& vertFilepath,
+            const std::string& fragFilepath,
+            const PipelineConfigInfo& configInfo)
             : lvkDevice{device} {
         createGraphicsPipeline(vertFilepath, fragFilepath, configInfo);
     }
@@ -21,28 +29,37 @@ namespace lvk {
         vkDestroyPipeline(lvkDevice.device(), graphicsPipeline, nullptr);
     }
 
-    std::vector<char> LvkPipeline::readFile(const std::string &filepath) {
-        std::ifstream file{filepath, std::ios::ate | std::ios::binary};
+    std::vector<char> LvkPipeline::readFile(const std::string& filepath) {
+        std::string absPath = ENGINE_DIR + filepath;
+
+        std::ifstream file{absPath, std::ios::ate | std::ios::binary};
         if (!file.is_open()) {
-            throw std::runtime_error("failed to open file: " + filepath);
+            throw std::runtime_error("failed to open file: " + absPath);
         }
+
         size_t fileSize = static_cast<size_t>(file.tellg());
         std::vector<char> buffer(fileSize);
+
         file.seekg(0);
         file.read(buffer.data(), fileSize);
+
         file.close();
         return buffer;
     }
 
-    void LvkPipeline::createGraphicsPipeline(const std::string &vertFilepath,
-                                             const std::string &fragFilepath,
-                                             const PipelineConfigInfo &configInfo) {
-        assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline:: no pipelineLayout provided in configInfo");
-        assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline:: no renderPass provided in configInfo");
+    void LvkPipeline::createGraphicsPipeline(
+            const std::string& vertFilepath,
+            const std::string& fragFilepath,
+            const PipelineConfigInfo& configInfo) {
+        assert(
+                configInfo.pipelineLayout != VK_NULL_HANDLE &&
+                "Cannot create graphics pipeline: no pipelineLayout provided in configInfo");
+        assert(
+                configInfo.renderPass != VK_NULL_HANDLE &&
+                "Cannot create graphics pipeline: no renderPass provided in configInfo");
+
         auto vertCode = readFile(vertFilepath);
         auto fragCode = readFile(fragFilepath);
-        std::cout << "Vertex Shader Code Size: " << vertCode.size() << "\n";
-        std::cout << "Fragment Shader Code Size: " << fragCode.size() << "\n";
 
         createShaderModule(vertCode, &vertShaderModule);
         createShaderModule(fragCode, &fragShaderModule);
@@ -55,7 +72,6 @@ namespace lvk {
         shaderStages[0].flags = 0;
         shaderStages[0].pNext = nullptr;
         shaderStages[0].pSpecializationInfo = nullptr;
-
         shaderStages[1].sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
         shaderStages[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
         shaderStages[1].module = fragShaderModule;
@@ -64,14 +80,14 @@ namespace lvk {
         shaderStages[1].pNext = nullptr;
         shaderStages[1].pSpecializationInfo = nullptr;
 
-        auto bindingDescriptions = LvkModel::Vertex::getBindingDescriptions();
-        auto attributeDescriptions = LvkModel::Vertex::getAttributeDescriptions();
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-        vertexInputInfo.vertexBindingDescriptionCount = static_cast<uint32_t>(bindingDescriptions.size());
-        vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
-        vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+        vertexInputInfo.vertexAttributeDescriptionCount =
+                static_cast<uint32_t>(configInfo.attributeDescriptions.size());
+        vertexInputInfo.vertexBindingDescriptionCount =
+                static_cast<uint32_t>(configInfo.bindingDescriptions.size());
+        vertexInputInfo.pVertexAttributeDescriptions = configInfo.attributeDescriptions.data();
+        vertexInputInfo.pVertexBindingDescriptions = configInfo.bindingDescriptions.data();
 
         VkGraphicsPipelineCreateInfo pipelineInfo{};
         pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -93,16 +109,22 @@ namespace lvk {
         pipelineInfo.basePipelineIndex = -1;
         pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
-        if (vkCreateGraphicsPipelines(lvkDevice.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &graphicsPipeline) != VK_SUCCESS){
+        if (vkCreateGraphicsPipelines(
+                lvkDevice.device(),
+                VK_NULL_HANDLE,
+                1,
+                &pipelineInfo,
+                nullptr,
+                &graphicsPipeline) != VK_SUCCESS) {
             throw std::runtime_error("failed to create graphics pipeline");
         }
     }
 
-    void LvkPipeline::createShaderModule(const std::vector<char> code, VkShaderModule *shaderModule) {
+    void LvkPipeline::createShaderModule(const std::vector<char> code, VkShaderModule* shaderModule) {
         VkShaderModuleCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
         createInfo.codeSize = code.size();
-        createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
+        createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
         if (vkCreateShaderModule(lvkDevice.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS) {
             throw std::runtime_error("failed to create shader module");
@@ -179,7 +201,12 @@ namespace lvk {
         configInfo.dynamicStateEnables = {VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR};
         configInfo.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
         configInfo.dynamicStateInfo.pDynamicStates = configInfo.dynamicStateEnables.data();
-        configInfo.dynamicStateInfo.dynamicStateCount = static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
+        configInfo.dynamicStateInfo.dynamicStateCount =
+                static_cast<uint32_t>(configInfo.dynamicStateEnables.size());
         configInfo.dynamicStateInfo.flags = 0;
+
+        configInfo.bindingDescriptions = LvkModel::Vertex::getBindingDescriptions();
+        configInfo.attributeDescriptions = LvkModel::Vertex::getAttributeDescriptions();
     }
+
 }

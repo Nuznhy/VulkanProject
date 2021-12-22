@@ -29,7 +29,6 @@ namespace lvk {
             LvkDevice &lvkDevice, std::unordered_map<uint32_t, VkDescriptorSetLayoutBinding> bindings)
             : lvkDevice{lvkDevice}, bindings{bindings} {
         std::vector<VkDescriptorSetLayoutBinding> setLayoutBindings{};
-        setLayoutBindings.reserve(bindings.size());
         for (auto kv : bindings) {
             setLayoutBindings.push_back(kv.second);
         }

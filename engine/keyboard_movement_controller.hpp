@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lvk_game_object.hpp"
-#include "lvk_window.hpp"
+#include "rendering/lvk_game_object.hpp"
+#include "rendering/lvk_window.hpp"
 
 namespace lvk {
     class KeyboardMovementController {

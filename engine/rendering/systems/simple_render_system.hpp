@@ -1,10 +1,10 @@
 #pragma once
-#include "lvk_frame_info.hpp"
-#include "lvk_camera.hpp"
-#include "lvk_pipeline.hpp"
-#include "lvk_device.hpp"
-#include "lvk_model.hpp"
-#include "lvk_game_object.hpp"
+#include "rendering/lvk_frame_info.hpp"
+#include "rendering/lvk_camera.hpp"
+#include "rendering/lvk_pipeline.hpp"
+#include "rendering/lvk_device.hpp"
+#include "rendering/lvk_model.hpp"
+#include "rendering/lvk_game_object.hpp"
 //std
 #include <memory>
 #include <vector>
@@ -17,7 +17,7 @@ namespace lvk {
 
         SimpleRenderSystem(const SimpleRenderSystem &) = delete;
         SimpleRenderSystem &operator=(const SimpleRenderSystem &) = delete;
-        void renderGameObjects(FrameInfo &frameInfo, std::vector<LvkGameObject> &gameObjects);
+        void renderGameObjects(FrameInfo &frameInfo);
     private:
         void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
         void createPipeline(VkRenderPass renderPass);

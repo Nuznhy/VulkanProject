@@ -20,7 +20,7 @@ namespace lvk {
             VkBufferUsageFlags usageFlags,
             VkMemoryPropertyFlags memoryPropertyFlags,
             VkDeviceSize minOffsetAlignment)
-            : lveDevice{device},
+            : lvkDevice{device},
               instanceSize{instanceSize},
               instanceCount{instanceCount},
               usageFlags{usageFlags},
@@ -32,18 +32,18 @@ namespace lvk {
 
     LvkBuffer::~LvkBuffer() {
         unmap();
-        vkDestroyBuffer(lveDevice.device(), buffer, nullptr);
-        vkFreeMemory(lveDevice.device(), memory, nullptr);
+        vkDestroyBuffer(lvkDevice.device(), buffer, nullptr);
+        vkFreeMemory(lvkDevice.device(), memory, nullptr);
     }
 
     VkResult LvkBuffer::map(VkDeviceSize size, VkDeviceSize offset) {
         assert(buffer && memory && "Called map on buffer before create");
-        return vkMapMemory(lveDevice.device(), memory, offset, size, 0, &mapped);
+        return vkMapMemory(lvkDevice.device(), memory, offset, size, 0, &mapped);
     }
 
     void LvkBuffer::unmap() {
         if (mapped) {
-            vkUnmapMemory(lveDevice.device(), memory);
+            vkUnmapMemory(lvkDevice.device(), memory);
             mapped = nullptr;
         }
     }
@@ -66,7 +66,7 @@ namespace lvk {
         mappedRange.memory = memory;
         mappedRange.offset = offset;
         mappedRange.size = size;
-        return vkFlushMappedMemoryRanges(lveDevice.device(), 1, &mappedRange);
+        return vkFlushMappedMemoryRanges(lvkDevice.device(), 1, &mappedRange);
     }
 
     VkResult LvkBuffer::invalidate(VkDeviceSize size, VkDeviceSize offset) {
@@ -75,7 +75,7 @@ namespace lvk {
         mappedRange.memory = memory;
         mappedRange.offset = offset;
         mappedRange.size = size;
-        return vkInvalidateMappedMemoryRanges(lveDevice.device(), 1, &mappedRange);
+        return vkInvalidateMappedMemoryRanges(lvkDevice.device(), 1, &mappedRange);
     }
 
     VkDescriptorBufferInfo LvkBuffer::descriptorInfo(VkDeviceSize size, VkDeviceSize offset) {
