@@ -79,8 +79,8 @@ namespace lvk {
             auto& obj = kv.second;
             if (obj.model == nullptr) continue;
             SimplePushConstantData push{};
-            if (obj.getId() == 1) {
-                obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.01f, glm::two_pi<float>());
+            if (obj.getId() == 8) {
+                obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + .01f, glm::two_pi<float>());
             }
             push.modelMatrix = obj.transform.mat4();
             push.normalMatrix = obj.transform.normalMatrix();

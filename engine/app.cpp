@@ -11,11 +11,13 @@
 #include <glm/gtc/constants.hpp>
 
 #include <stdexcept>
+#include <filesystem>
 #include <array>
 #include <cstdlib>
 #include <ctime>
 #include <chrono>
 #include <numeric>
+#include <iostream>
 
 namespace lvk {
 
@@ -131,7 +133,7 @@ namespace lvk {
     }
 
     void App::loadGameObjects() {
-        std::shared_ptr<LvkModel> floorModel = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/floor.obj");
+        std::shared_ptr<LvkModel> floorModel = LvkModel::createModelFromFile(lvkDevice, std::filesystem::current_path().append("../src/models/floor.obj"));
         auto floor = LvkGameObject::createGameObject();
         floor.model = floorModel;
         floor.transform.translation = {0.f, .5f, .5f};
@@ -145,7 +147,7 @@ namespace lvk {
 //        xwing.transform.scale = glm::vec3(1.f);
 //        gameObjects.emplace(xwing.getId(), std::move(xwing));
 //
-        std::shared_ptr<LvkModel> ar15Model = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/ar-15.obj");
+        std::shared_ptr<LvkModel> ar15Model = LvkModel::createModelFromFile(lvkDevice, std::filesystem::current_path().append("../src/models/ar-15.obj"));
         auto ar15 = LvkGameObject::createGameObject();
         ar15.model = ar15Model;
         ar15.transform.translation = {.0f, 0.f, 0.0f};
@@ -162,7 +164,7 @@ namespace lvk {
         };
 
         for (int i = 0; i < colors.size(); i++) {
-            auto pointLight = LvkGameObject::makePointLight(0.2f);
+            auto pointLight = LvkGameObject::makePointLight(0.5f);
             pointLight.color = colors[i];
             auto rotateLight =
                     glm::rotate(glm::mat4(1.f), (i * glm::two_pi<float>()) / colors.size(), {0.f, -1.f, 0.f});
@@ -170,11 +172,12 @@ namespace lvk {
             gameObjects.emplace(pointLight.getId(), std::move(pointLight));
         }
 
-//        std::shared_ptr<LvkModel> e100Model = LvkModel::createModelFromFile(lvkDevice, "/home/nuznhy/CLionProjects/VulkanProject/src/models/e100_v2.obj");
-//        auto e100 = LvkGameObject::createGameObject();
-//        e100.model = e100Model;
-//        e100.transform.translation = {.0f, .5f, 0.5f};
-//        e100.transform.scale = glm::vec3(1.f);
-//        gameObjects.push_back(std::move(e100));
+        std::shared_ptr<LvkModel> e100Model = LvkModel::createModelFromFile(lvkDevice, std::filesystem::current_path().append("../src/models/e100_v2.obj"));
+        auto e100 = LvkGameObject::createGameObject();
+        e100.model = e100Model;
+        e100.transform.translation = {.5f, .5f, 0.5f};
+        e100.transform.scale = glm::vec3(.1f);
+        std::cout << e100.getId() << std::endl;
+        gameObjects.emplace(e100.getId(), std::move(e100));
     }
 }

@@ -13,6 +13,7 @@ include_directories("src/shaders")
 include_directories("src/models")
 include_directories("shaders")
 
+
 set(RESOURCE_INSTALL_DIR "" CACHE PATH "Path to install resources to (leave empty for running uninstalled)")
 
 message(STATUS "Using module to find Vulkan")
@@ -52,31 +53,39 @@ endfunction(add_shader)
 
 
 set(HEADER_FILES
-        engine/lvk_window.hpp
+        engine/rendering/systems/point_light_system.hpp
+        engine/rendering/systems/simple_render_system.hpp
+        engine/rendering/lvk_buffer.hpp
+        engine/rendering/lvk_camera.hpp
+        engine/rendering/lvk_descriptors.hpp
+        engine/rendering/lvk_device.hpp
+        engine/rendering/lvk_frame_info.hpp
+        engine/rendering/lvk_game_object.hpp
+        engine/rendering/lvk_model.hpp
+        engine/rendering/lvk_pipeline.hpp
+        engine/rendering/lvk_renderer.hpp
+        engine/rendering/lvk_swap_chain.hpp
+        engine/rendering/lvk_window.hpp
         engine/app.hpp
-        engine/lvk_pipeline.hpp
-        engine/lvk_device.hpp
-        engine/lvk_swap_chain.hpp
-        engine/lvk_model.hpp
-        engine/lvk_game_object.hpp
-        engine/lvk_renderer.hpp
-        engine/simple_render_system.hpp
-        engine/lvk_camera.hpp
         engine/keyboard_movement_controller.hpp
-        engine/lvk_buffer.hpp engine/lvk_frame_info.hpp engine/lvk_descriptors.hpp)
+        engine/lvk_utils.hpp
+        )
 set(CPP_FILES
-        engine/lvk_window.cpp
+        engine/rendering/systems/point_light_system.cpp
+        engine/rendering/systems/simple_render_system.cpp
+        engine/rendering/lvk_buffer.cpp
+        engine/rendering/lvk_camera.cpp
+        engine/rendering/lvk_descriptors.cpp
+        engine/rendering/lvk_device.cpp
+        engine/rendering/lvk_game_object.cpp
+        engine/rendering/lvk_model.cpp
+        engine/rendering/lvk_pipeline.cpp
+        engine/rendering/lvk_renderer.cpp
+        engine/rendering/lvk_swap_chain.cpp
+        engine/rendering/lvk_window.cpp
         engine/app.cpp
-        engine/lvk_pipeline.cpp
-        engine/lvk_device.cpp
-        engine/lvk_swap_chain.cpp
-        engine/lvk_model.cpp
-        engine/lvk_renderer.cpp
-        engine/simple_render_system.cpp
-        engine/lvk_camera.cpp
         engine/keyboard_movement_controller.cpp
-        engine/lvk_game_object.cpp
-        engine/lvk_buffer.cpp engine/lvk_descriptors.cpp)
+        )
 
 add_executable(newexec main.cpp ${CPP_FILES} ${HEADER_FILES})
 add_shader(newexec shader.frag)
